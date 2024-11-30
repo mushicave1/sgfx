@@ -1,6 +1,8 @@
 #include <stdio.h>
 
+extern void testArrayList();
+
 int main(int argc, char **argv) {
-	printf("Hello, World!");
+	testArrayList();
 	return 0;
 }
