@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libsgfx.a CMakeFiles/sgfx.dir/opengl.c.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libsgfx.a

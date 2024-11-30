@@ -1,8 +1,0 @@
-/Users/kenmasters/.code/projects/sgfx/build/CMakeFiles/edit_cache.dir
-/Users/kenmasters/.code/projects/sgfx/build/CMakeFiles/rebuild_cache.dir
-/Users/kenmasters/.code/projects/sgfx/build/src/CMakeFiles/sgfx.dir
-/Users/kenmasters/.code/projects/sgfx/build/src/CMakeFiles/edit_cache.dir
-/Users/kenmasters/.code/projects/sgfx/build/src/CMakeFiles/rebuild_cache.dir
-/Users/kenmasters/.code/projects/sgfx/build/test/CMakeFiles/sgfx_test.dir
-/Users/kenmasters/.code/projects/sgfx/build/test/CMakeFiles/edit_cache.dir
-/Users/kenmasters/.code/projects/sgfx/build/test/CMakeFiles/rebuild_cache.dir
