@@ -3,7 +3,6 @@
 
 
 #include "core.h"
-#include <stdlib.h>
 
 /**
  * Doesn't need T to be defined anywhere.

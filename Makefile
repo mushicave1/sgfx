@@ -1,7 +1,9 @@
+USE_GLFW ?= OFF
+
 build: clean
 	@echo "Building project..."	
 	mkdir -p build
-	cd build && cmake -S ../ -B . && make 
+	cd build && cmake -S ../ -B. -DUSE_GLFW=${USE_GLFW} && make 
 
 tests:
 	@echo "Running tests..."
