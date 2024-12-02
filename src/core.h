@@ -21,19 +21,3 @@
     } while (0)                                                             \
 
 #endif
-
-
-
-typedef enum {
-    R,
-    Rg,
-    Rgb,
-    Rgba
-} TextureFormat;
-
-typedef enum {
-    Rgb32,
-    Rgb32f,
-    Rgba32,
-    Rgba32f
-} TextureInternalFormat;

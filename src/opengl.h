@@ -3,23 +3,8 @@
 
 #include <glad/glad.h>
 
-#include "core.h"
+#include <sgfx/sgxf.h>
 
-
-#ifdef USE_GLFW 
-    #include <GLFW/glfw3.h> 
-
-    #define SGFX_OPENGL_GLFW_INIT() \
-        do { \
-            glfwInit(); \
-            const GLFWwindow* window = glfwCreateWindow(600, 400, "Test", NULL, NULL); \
-            glfwMakeContextCurrent(window); \
-            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { \
-                fprintf(stderr, "Failed to initialize GLAD\n"); \
-                return -1; \
-            } \
-        } while (false) 
-#endif
 
 typedef struct { 
     void *vertices;
@@ -66,25 +51,17 @@ inline static GLenum openglTextureInternalFormat(TextureInternalFormat internal_
     }
 }
 
+int openglCreateVertexBuffer(void *data, size_t byte_size, VertexBufferHandle *handle);
+void openglDestroyVertexBuffer(VertexBufferHandle *handle);
 
-void sgfxOpenglInit();
+int openglCreateIndexBuffer(void *data, size_t byte_size, IndexBufferHandle *handle);
+void openglDestroyIndexBuffer(IndexBufferHandle *handle);
 
-int sgfxOpenglCreateVertexBuffer(void *data, size_t byte_size, GLVertexBuffer *buffer);
-void sgfxOpenglDestroyVertexBuffer(GLVertexBuffer *vertex_buffer);
+int openglCreateProgram(const char *fs_code, const char *vs_code, ProgramHandle *handle);
+void openglDestroyProgram(ProgramHandle *handle);
 
-int sgfxOpenglCreateIndexBuffer(void *data, size_t byte_size, GLIndexBuffer *buffer);
-void sgfxOpenglDestroyIndexBuffer(GLIndexBuffer *index_buffer);
-
-int sgfxOpenglCreateProgram(const char *fs_code, const char *vs_code, GLProgram *program);
-void sgfxOpenglDestroyProgram(GLProgram *program);
-
-int sgfxOpenglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, GLTexture *texture);
-void sgfxOpenglDestroyTexture(GLTexture *texture);
-
-
-
-
-
+int openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle);
+void openglDestroyTexture(TextureHandle *handle);
 
 
 

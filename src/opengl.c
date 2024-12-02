@@ -1,7 +1,19 @@
 #include "opengl.h"
 
-int sgfxOpenglCreateVertexBuffer(void *data, size_t byte_size, GLVertexBuffer *buffer) 
+
+
+typedef struct {
+    GLVertexBuffer vertex_buffers[SGFX_MAX_VERTEX_BUFFERS];
+    GLVertexBuffer index_buffers[SGFX_MAX_INDEX_BUFFERS];
+    GLVertexBuffer programs[SGFX_MAX_PROGRAMS];
+    GLVertexBuffer textures[SGFX_MAX_TEXTURES];
+} OpenglContext;
+
+OpenglContext s_ctx;
+
+int openglCreateVertexBuffer(void *data, size_t byte_size, VertexBufferHandle *handle) 
 {
+    GLVertexBuffer* buffer = &s_ctx.vertex_buffers[handle->idx];
     glGenBuffers(1, &buffer->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, buffer->vbo);
     glBufferData(GL_ARRAY_BUFFER, byte_size, data, GL_STATIC_DRAW);
@@ -9,12 +21,13 @@ int sgfxOpenglCreateVertexBuffer(void *data, size_t byte_size, GLVertexBuffer *b
     return 1;
 }
 
-void sgfxOpenglDestroyVertexBuffer(GLVertexBuffer *vertex_buffer) 
+void openglDestroyVertexBuffer(VertexBufferHandle *handle) 
 {
-    glDeleteBuffers(1, &vertex_buffer->vbo);
+    GLVertexBuffer* buffer = &s_ctx.vertex_buffers[handle->idx];
+    glDeleteBuffers(1, &buffer->vbo);
 }
 
-int sgfxOpenglCreateIndexBuffer(void *data, size_t byte_size, GLIndexBuffer *buffer) 
+int openglCreateIndexBuffer(void *data, size_t byte_size, IndexBufferHandle *handle) 
 {
     glGenBuffers(1, &buffer->ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->ebo);
@@ -23,13 +36,13 @@ int sgfxOpenglCreateIndexBuffer(void *data, size_t byte_size, GLIndexBuffer *buf
     return 1;
 }
 
-void sgfxOpenglDestroyIndexBuffer(GLIndexBuffer *index_buffer) 
+void openglDestroyIndexBuffer(IndexBufferHandle *handle) 
 {
     glDeleteBuffers(1, &index_buffer->ebo);
 }
 
 
-int sgfxOpenglCreateProgram(const char *fs_code, const char *vs_code, GLProgram *program) 
+int openglCreateProgram(const char *fs_code, const char *vs_code, ProgramHandle *handle) 
 {
     const GLuint v_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(v_shader, 1, vs_code, NULL);
@@ -70,12 +83,12 @@ int sgfxOpenglCreateProgram(const char *fs_code, const char *vs_code, GLProgram 
     return 1;
 }
 
-void sgfxOpenglDestroyProgram(GLProgram *program) 
+void openglDestroyProgram(ProgramHandle *handle) 
 {
     glDeleteProgram(program->program);
 }
 
-int sgfxOpenglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, GLTexture *texture) 
+int openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle) 
 {   
     glGenTextures(1, &texture->tex);
     glBindTexture(GL_TEXTURE_2D, texture->tex);
@@ -84,7 +97,10 @@ int sgfxOpenglCreateTexture(const unsigned char *pixels, size_t width, size_t he
     return 1;
 }
 
-void sgfxOpenglDestroyTexture(GLTexture *texture) 
+void openglDestroyTexture(TextureHandle *handle) 
 {
     glDeleteTextures(1, &texture->tex);
 }
+
+
+

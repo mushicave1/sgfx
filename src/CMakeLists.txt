@@ -7,13 +7,6 @@ set(SGFX_SRC_SOURCES
 
 add_library(${PROJECT_NAME} ${SGFX_SRC_SOURCES})
 
-if(USE_GLFW)
-    add_definitions(-DUSE_GLFW)
-    message("Using GLFW")
-    find_package(glfw3 3.3 REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
-endif()
-
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${CMAKE_SOURCE_DIR}/src

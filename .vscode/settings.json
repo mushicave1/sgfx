@@ -4,6 +4,7 @@
         "test.h": "c",
         "core.h": "c",
         "opengl.h": "c",
-        "glfw3.h": "c"
+        "glfw3.h": "c",
+        "sgxf.h": "c"
     }
 }
