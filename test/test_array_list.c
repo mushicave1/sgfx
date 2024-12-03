@@ -12,10 +12,10 @@ int testArrayList()
 
     for ( size_t i = 0; i < 10; i++) { 
         IntegerArrayList_Push(&arr, 10);
-        printf("item: %d", arr.data[i]);
+        printf("item: %d \r\n", arr.data[i]);
     }
 
-    ASSERT_EQ(arr.len == 10);
+    ASSERT_TRUE(arr.len == 10);
 
     IntegerArrayList_Deinit(&arr);
 

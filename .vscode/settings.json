@@ -5,6 +5,8 @@
         "core.h": "c",
         "opengl.h": "c",
         "glfw3.h": "c",
-        "sgxf.h": "c"
+        "sgxf.h": "c",
+        "stdio.h": "c",
+        "glad.h": "c"
     }
 }

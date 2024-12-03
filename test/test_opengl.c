@@ -1,6 +1,9 @@
 #include <sgfx/sgxf.h>
-#include <opengl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+
+#include "test.h"
 
 float vertices[12] = {
     -0.5, -0.5, 1.0, 
@@ -9,7 +12,8 @@ float vertices[12] = {
     -0.5, 0.5, 1.0
 }; 
 
-void initGlfw() {
+static void initGlfw() 
+{
     glfwInit(); 
     const GLFWwindow* window = glfwCreateWindow(600, 400, "Test", NULL, NULL); 
     glfwMakeContextCurrent(window); 
@@ -18,18 +22,26 @@ void initGlfw() {
     } 
 }
 
+int testHandles() {
+    VertexBufferHandle vbo = sfgxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    VertexBufferHandle vbo1 = sfgxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+
+    ASSERT_TRUE(vbo.idx == 0);
+    ASSERT_TRUE(vbo1.idx == 1);
+
+    sfgxDestroyVertexBuffer(&vbo);
+    sfgxDestroyVertexBuffer(&vbo1);
+
+    ASSERT_TRUE(vbo.idx == (uint16_t)(-1));
+    ASSERT_TRUE(vbo1.idx == (uint16_t)(-1));
+
+    return 1;
+}
+
 int testOpengl() {
-    sfgxInit(Vulkan);
-
     initGlfw();
+    
+    sfgxInit(Opengl);
 
-    GLVertexBuffer vertex_buffer;
-    openglCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices), &vertex_buffer);
-    openglDestroyVertexBuffer(&vertex_buffer);
-
-    GLIndexBuffer index_buffer;
-    openglCreateIndexBuffer((void*)vertices, sizeof(float) * sizeof(vertices), &index_buffer);
-    openglDestroyIndexBuffer(&index_buffer);
-
-    return 0;
+    RUN_TEST(testHandles);
 }

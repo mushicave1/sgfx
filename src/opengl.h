@@ -1,10 +1,8 @@
 #ifndef SGFX_OPENGL_H
 #define SGFX_OPENGL_H
 
-#include <glad/glad.h>
-
 #include <sgfx/sgxf.h>
-
+#include <glad/glad.h>
 
 typedef struct { 
     void *vertices;
@@ -51,16 +49,16 @@ inline static GLenum openglTextureInternalFormat(TextureInternalFormat internal_
     }
 }
 
-int openglCreateVertexBuffer(void *data, size_t byte_size, VertexBufferHandle *handle);
+VertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size);
 void openglDestroyVertexBuffer(VertexBufferHandle *handle);
 
-int openglCreateIndexBuffer(void *data, size_t byte_size, IndexBufferHandle *handle);
+IndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size);
 void openglDestroyIndexBuffer(IndexBufferHandle *handle);
 
-int openglCreateProgram(const char *fs_code, const char *vs_code, ProgramHandle *handle);
+ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code);
 void openglDestroyProgram(ProgramHandle *handle);
 
-int openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle);
+TextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
 void openglDestroyTexture(TextureHandle *handle);
 
 

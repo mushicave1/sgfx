@@ -8,10 +8,10 @@
 #define RUN_TEST( T )                                                                                                            \
 	do {                                                                                                                         \
 		int result = T();                                                                                                        \
-		if ( result == 1 )                                                                                                       \
+		if ( result == -1 )                                                                                                       \
 		{                                                                                                                        \
 			printf( "test failed: " #T "\n" );                                                                                   \
-			return 1;                                                                                                            \
+			return -1;                                                                                                            \
 		}                                                                                                                        \
 		else                                                                                                                     \
 		{                                                                                                                        \
@@ -21,13 +21,12 @@
 
 
 
-#define ASSERT_EQ( condition )																									\
+#define ASSERT_TRUE( condition )																									\
 	do {																														\
 		if ( (condition) == false ) 																								\
 		{																														\
 			printf( "condition failed: " #condition "\r\n" );																	\
-			assert(false);																										\
-			return 1;																											\
+			return -1;																											\
 		}																														\
 	} while ( false )
 

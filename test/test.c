@@ -1,7 +1,7 @@
-#include <stdio.h>
+#include "test.h"
 
-extern void testArrayList();
-extern void testOpengl();
+extern int testArrayList();
+extern int testOpengl();
 
 int main(int argc, char **argv) {
 	testArrayList();

@@ -5,6 +5,7 @@ set(SGFX_SRC_SOURCES
     opengl.c
 )
 
+
 add_library(${PROJECT_NAME} ${SGFX_SRC_SOURCES})
 
 target_include_directories(${PROJECT_NAME}
@@ -12,5 +13,6 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/extern/glad/include
-    ${CMAKE_SOURCE_DIR}/extern/glfw/3.4/include
 )
+ 
+

@@ -3,17 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-extern int openglCreateVertexBuffer(void *data, size_t byte_size, VertexBufferHandle *handle);
+extern VertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size);
 extern void openglDestroyVertexBuffer(VertexBufferHandle *handle);
 
-extern int openglCreateIndexBuffer(void *data, size_t byte_size, IndexBufferHandle *handle);
+extern IndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size);
 extern void openglDestroyIndexBuffer(IndexBufferHandle *handle);
 
-extern int openglCreateProgram(const char *fs_code, const char *vs_code, ProgramHandle *handle);
+extern ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code);
 extern void openglDestroyProgram(ProgramHandle *handle);
 
-extern int openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle);
+extern TextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
 extern void openglDestroyTexture(TextureHandle *handle);
 
 const char* sgfxReadFile(const char* file_path) 
@@ -42,16 +41,16 @@ const char* sgfxReadFile(const char* file_path)
 
 
 typedef struct {
-    int (*createVertexBuffer)(void *data, size_t byte_size, VertexBufferHandle *handle);
+    VertexBufferHandle (*createVertexBuffer)(void *data, size_t byte_size);
     void (*destroyVertexBuffer)(VertexBufferHandle *handle);
 
-    int (*createIndexBuffer)(void *data, size_t byte_size, IndexBufferHandle *handle);
+    IndexBufferHandle (*createIndexBuffer)(void *data, size_t byte_size);
     void (*destroyIndexBuffer)(IndexBufferHandle *handle);
 
-    int (*createProgram)(const char *fs_code, const char *vs_code, ProgramHandle *handle);
+    ProgramHandle (*createProgram)(const char *fs_code, const char *vs_code);
     void (*destroyProgram)(ProgramHandle *handle);
 
-    int (*createTexture)(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle);
+    TextureHandle (*createTexture)(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
     void (*destroyTexture)(TextureHandle *handle);
 } Context;
 
@@ -76,9 +75,9 @@ int sfgxInit(GraphicsBackend backend)
 }
 
 
-int sfgxCreateVertexBuffer(void *data, size_t byte_size, VertexBufferHandle *handle) 
+VertexBufferHandle sfgxCreateVertexBuffer(void *data, size_t byte_size) 
 {
-    return s_context.createVertexBuffer(data, byte_size, handle);
+    return s_context.createVertexBuffer(data, byte_size);
 }
 
 void sfgxDestroyVertexBuffer(VertexBufferHandle *handle) 
@@ -86,9 +85,9 @@ void sfgxDestroyVertexBuffer(VertexBufferHandle *handle)
     return s_context.destroyVertexBuffer(handle);
 }
 
-int sfgxCreateIndexBuffer(void *data, size_t byte_size, IndexBufferHandle *handle) 
+IndexBufferHandle sfgxCreateIndexBuffer(void *data, size_t byte_size) 
 {
-    return s_context.createIndexBuffer(data, byte_size, handle);
+    return s_context.createIndexBuffer(data, byte_size);
 }
 
 void sfgxDestroyIndexBuffer(IndexBufferHandle *handle) 
@@ -97,9 +96,9 @@ void sfgxDestroyIndexBuffer(IndexBufferHandle *handle)
 }
 
 
-int sfgxCreateProgram(const char *fs_code, const char *vs_code, ProgramHandle *handle) 
+ProgramHandle sfgxCreateProgram(const char *fs_code, const char *vs_code) 
 {
-    return s_context.createProgram(fs_code, vs_code, handle);
+    return s_context.createProgram(fs_code, vs_code);
 }
 
 void sfgxDestroyProgram(ProgramHandle *handle) 
@@ -108,9 +107,9 @@ void sfgxDestroyProgram(ProgramHandle *handle)
 }  
 
 
-int sfgxCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count, TextureHandle *handle) 
+TextureHandle sfgxCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count) 
 {
-    return s_context.createTexture(pixels, width, height, format, internal_format, mip_map_count, handle);
+    return s_context.createTexture(pixels, width, height, format, internal_format, mip_map_count);
 }
 
 void sfgxDestroyTexture(TextureHandle *handle) 
