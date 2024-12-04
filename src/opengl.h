@@ -28,6 +28,10 @@ typedef struct {
     GLuint mip_map_levels;
 } GLTexture;
 
+typedef struct {
+    GLuint vao;
+} GLVertexInput;
+
 
 inline static GLenum openglTextureFormat(TextureFormat format) 
 {
@@ -49,17 +53,20 @@ inline static GLenum openglTextureInternalFormat(TextureInternalFormat internal_
     }
 }
 
-VertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size);
-void openglDestroyVertexBuffer(VertexBufferHandle *handle);
+SGFXVertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size);
+void openglDestroyVertexBuffer(SGFXVertexBufferHandle *handle);
 
-IndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size);
-void openglDestroyIndexBuffer(IndexBufferHandle *handle);
+SGFXIndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size);
+void openglDestroyIndexBuffer(SGFXIndexBufferHandle *handle);
 
-ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code);
-void openglDestroyProgram(ProgramHandle *handle);
+SGFXProgramHandle openglCreateProgram(const char *vs_code, const char *fs_code);
+void openglDestroyProgram(SGFXProgramHandle *handle);
 
-TextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
-void openglDestroyTexture(TextureHandle *handle);
+SGFXVertexInputHandle openglCreateVertexInput(SGFXVertexBufferHandle vertex_buffer, SGFXBufferView buffer_view, SGFXIndexBufferHandle index_buffer);
+void openglDestroyVertexInput(SGFXVertexInputHandle *handle);
+
+SGFXTextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
+void openglDestroyTexture(SGFXTextureHandle *handle);
 
 
 

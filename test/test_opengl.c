@@ -12,9 +12,18 @@ float vertices[12] = {
     -0.5, 0.5, 1.0
 }; 
 
+uint32_t indices[12] = {
+    0, 1, 2,
+    2, 3, 0
+};
+
 static void initGlfw() 
 {
     glfwInit(); 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // Required on macOS
     const GLFWwindow* window = glfwCreateWindow(600, 400, "Test", NULL, NULL); 
     glfwMakeContextCurrent(window); 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { 
@@ -23,14 +32,14 @@ static void initGlfw()
 }
 
 int testHandles() {
-    VertexBufferHandle vbo = sfgxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
-    VertexBufferHandle vbo1 = sfgxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    SGFXVertexBufferHandle vbo = sgfxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    SGFXVertexBufferHandle vbo1 = sgfxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
 
     ASSERT_TRUE(vbo.idx == 0);
     ASSERT_TRUE(vbo1.idx == 1);
 
-    sfgxDestroyVertexBuffer(&vbo);
-    sfgxDestroyVertexBuffer(&vbo1);
+    sgfxDestroyVertexBuffer(&vbo);
+    sgfxDestroyVertexBuffer(&vbo1);
 
     ASSERT_TRUE(vbo.idx == (uint16_t)(-1));
     ASSERT_TRUE(vbo1.idx == (uint16_t)(-1));
@@ -38,10 +47,38 @@ int testHandles() {
     return 1;
 }
 
+
+int test_vertex_input() {
+    SGFXVertexBufferHandle vbo = sgfxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    SGFXIndexBufferHandle ebo = sgfxCreateIndexBuffer((void*)indices, sizeof(uint32_t) * sizeof(indices));
+
+    const uint32_t offsets[3] = {0, 3*sizeof(float), 5*sizeof(float)};
+    const uint32_t element_counts[3] = {3, 3, 2}; 
+    SGFXBufferView view;
+    view.offsets = offsets;
+    view.len = 3;
+    view.stride = 8 * sizeof(float);
+    view.element_counts = element_counts;
+
+    SGFXVertexInputHandle vao = sgfxCreateVertexInput(vbo, view, ebo);
+
+    sgfxDestroyVertexBuffer(&vbo);
+    sgfxDestroyIndexBuffer(&ebo);
+    sgfxDestroyVertexInput(&vao);
+
+    return 0;
+}
+
+int test_shader_program() {
+
+}
+
 int testOpengl() {
     initGlfw();
     
-    sfgxInit(Opengl);
+    sgfxInit(Opengl);
 
     RUN_TEST(testHandles);
+    RUN_TEST(test_vertex_input);
+    RUN_TEST(test_shader_program);
 }

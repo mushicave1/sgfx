@@ -11,6 +11,11 @@ float vertices[12] = {
 }; 
 
 
+uint32_t indices[12] = {
+    0, 1, 2,
+    2, 3, 0
+};
+
 void keyCallback(GLFWwindow* window, int key, int action, int mods, int scancode) {
     if(key == GLFW_KEY_ESCAPE) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -20,6 +25,10 @@ void keyCallback(GLFWwindow* window, int key, int action, int mods, int scancode
 static GLFWwindow* initGlfw() 
 {
     glfwInit(); 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // Required on macOS
     GLFWwindow* window = glfwCreateWindow(600, 400, "Test", NULL, NULL); 
     glfwMakeContextCurrent(window); 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { 
@@ -27,25 +36,43 @@ static GLFWwindow* initGlfw()
     } 
 
     glfwSetKeyCallback(window, keyCallback);
-
     return window;
 }
 
 
 int main(int argc, char **argv) {
     GLFWwindow* window = initGlfw();
-    sfgxInit(Opengl);
+    sgfxInit(Opengl);
 
-    VertexBufferHandle vbo = sfgxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    SGFXVertexBufferHandle vbo = sgfxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
+    SGFXIndexBufferHandle ebo = sgfxCreateIndexBuffer((void*)indices, sizeof(indices) * sizeof(uint32_t));
+    SGFXProgramHandle program = sgfxCreateProgram(sgfxReadFile("./examples/vs_basic.glsl"), sgfxReadFile("./examples/fs_color.glsl"));
 
+    const uint32_t offsets[3] = {0};
+    const uint32_t element_counts[3] = {3}; 
+    SGFXBufferView view;
+    view.offsets = offsets;
+    view.len = 1;
+    view.stride = 3 * sizeof(float);
+    view.element_counts = element_counts;
+
+    SGFXVertexInputHandle vao = sgfxCreateVertexInput(vbo, view, ebo);
+
+    glViewport(0, 0, 600*2, 400*2);
     while(!glfwWindowShouldClose(window)) 
     {
         glfwPollEvents();
-        glClearColor(0.1, 0.5, 0.1, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.1, 0.1, 0.12, 1.0);
+
+        sgfxDrawIndexed(6, vao, program);
         glfwSwapBuffers(window);
     }
 
-    sfgxDestroyVertexBuffer(&vbo);
+    sgfxDestroyVertexBuffer(&vbo);
+    sgfxDestroyIndexBuffer(&ebo);
+    sgfxDestroyProgram(&program);
+    sgfxDestroyVertexInput(&vao);
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

@@ -10,10 +10,11 @@
         uint16_t idx; \
     } TYPE##Handle ; \
 
-SGFX_HANDLE(VertexBuffer);
-SGFX_HANDLE(IndexBuffer);
-SGFX_HANDLE(Program);
-SGFX_HANDLE(Texture);
+SGFX_HANDLE(SGFXVertexBuffer);
+SGFX_HANDLE(SGFXIndexBuffer);
+SGFX_HANDLE(SGFXVertexInput);
+SGFX_HANDLE(SGFXProgram);
+SGFX_HANDLE(SGFXTexture);
 
 typedef enum {
     Opengl,
@@ -35,22 +36,34 @@ typedef enum {
 } TextureInternalFormat;
 
 
+typedef struct {
+    uint32_t stride;
+    uint32_t *offsets;
+    uint32_t *element_counts;
+    uint32_t len;
+} SGFXBufferView;
+
 const char* sgfxReadFile(const char* file_path);
 
+int sgfxInit(GraphicsBackend backend);
 
-int sfgxInit(GraphicsBackend backend);
+SGFXVertexBufferHandle sgfxCreateVertexBuffer(void *data, size_t byte_size);
+void sgfxDestroyVertexBuffer(SGFXVertexBufferHandle *handle);
 
-VertexBufferHandle sfgxCreateVertexBuffer(void *data, size_t byte_size);
-void sfgxDestroyVertexBuffer(VertexBufferHandle *handle);
+SGFXIndexBufferHandle sgfxCreateIndexBuffer(void *data, size_t byte_size);
+void sgfxDestroyIndexBuffer(SGFXIndexBufferHandle *handle);
 
-IndexBufferHandle sfgxCreateIndexBuffer(void *data, size_t byte_size);
-void sfgxDestroyIndexBuffer(IndexBufferHandle *handle);
+SGFXVertexInputHandle sgfxCreateVertexInput(SGFXVertexBufferHandle vertex_buffer, SGFXBufferView buffer_view, SGFXIndexBufferHandle index_buffer);
+void sgfxDestroyVertexInput(SGFXVertexInputHandle *handle);
 
-ProgramHandle sfgxCreateProgram(const char *fs_code, const char *vs_code);
-void sfgxDestroyProgram(ProgramHandle *handle);
+SGFXProgramHandle sgfxCreateProgram(const char *vs_code, const char *fs_code);
+void sgfxDestroyProgram(SGFXProgramHandle *handle);
 
-TextureHandle sfgxCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
-void sfgxDestroyTexture(TextureHandle *handle);
+SGFXTextureHandle sgfxCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count);
+void sgfxDestroyTexture(SGFXTextureHandle *handle);
+
+
+void sgfxDrawIndexed(size_t count, SGFXVertexInputHandle vertex_input, SGFXProgramHandle program);
 
 
 #endif /** SGFX_H */

@@ -6,10 +6,11 @@
 #include <stdbool.h>
 
 #define SGFX_NULL_INDEX (-1)
-#define SFGX_INVALID_HANDLE (-1)
+#define SGFX_INVALID_HANDLE (-1)
 
 #define SGFX_MAX_VERTEX_BUFFERS 100
 #define SGFX_MAX_INDEX_BUFFERS 100
+#define SGFX_MAX_VERTEX_INPUTS 100
 #define SGFX_MAX_PROGRAMS 100
 #define SGFX_MAX_TEXTURES 100
 
@@ -27,12 +28,7 @@
     } while (0)                                                             \
 
 
-#define SGFX_ASSERT_HANDLE_IS_VALID(HANDLE) \
-    do { \
-        if( (HANDLE).idx != SGFX_INVALID_HANDLE) { \
-            fprintf(stderr, "Error: sgfx handle is not valid. \r\n file: %s \r\n line: %d", __FILE__, __LINE__); \
-        } \
-    } while (false) \
+#define SGFX_ASSERT_HANDLE_IS_VALID(HANDLE) ((HANDLE).idx != SGFX_INVALID_HANDLE)
 
 
 

@@ -4,33 +4,34 @@
 typedef struct {
     GLVertexBuffer vertex_buffers[SGFX_MAX_VERTEX_BUFFERS];
     GLIndexBuffer index_buffers[SGFX_MAX_INDEX_BUFFERS];
+    GLVertexInput vertex_inputs[SGFX_MAX_VERTEX_INPUTS];
     GLProgram programs[SGFX_MAX_PROGRAMS];
     GLTexture textures[SGFX_MAX_TEXTURES];
 } OpenglContext;
 
 OpenglContext s_ctx;
 
-VertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size) 
+SGFXVertexBufferHandle openglCreateVertexBuffer(void *data, size_t byte_size) 
 { 
     static uint16_t counter = -1;
     counter++;
-    GLVertexBuffer* buffer = &s_ctx.vertex_buffers[counter];
+    GLVertexBuffer *buffer = &s_ctx.vertex_buffers[counter];
     glGenBuffers(1, &buffer->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, buffer->vbo);
     glBufferData(GL_ARRAY_BUFFER, byte_size, data, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 
-    return (VertexBufferHandle){.idx = counter};
+    return (SGFXVertexBufferHandle){.idx = counter};
 }
 
-void openglDestroyVertexBuffer(VertexBufferHandle *handle) 
+void openglDestroyVertexBuffer(SGFXVertexBufferHandle *handle) 
 {
-    GLVertexBuffer* buffer = &s_ctx.vertex_buffers[handle->idx];
+    GLVertexBuffer *buffer = &s_ctx.vertex_buffers[handle->idx];
     glDeleteBuffers(1, &buffer->vbo);
     handle->idx = SGFX_NULL_INDEX;
 }
 
-IndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size) 
+SGFXIndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size) 
 {
     static uint16_t counter = -1;
     counter++;
@@ -40,24 +41,62 @@ IndexBufferHandle openglCreateIndexBuffer(void *data, size_t byte_size)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, byte_size, data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
 
-    return (IndexBufferHandle){.idx = counter};
+    return (SGFXIndexBufferHandle){.idx = counter};
 }
 
-void openglDestroyIndexBuffer(IndexBufferHandle *handle) 
+void openglDestroyIndexBuffer(SGFXIndexBufferHandle *handle) 
 {
-    GLIndexBuffer* buffer = &s_ctx.index_buffers[handle->idx];
+    GLIndexBuffer *buffer = &s_ctx.index_buffers[handle->idx];
     glDeleteBuffers(1, &buffer->ebo);
     handle->idx = SGFX_NULL_INDEX;
 }
 
+SGFXVertexInputHandle openglCreateVertexInput(SGFXVertexBufferHandle vertex_buffer, SGFXBufferView buffer_view, SGFXIndexBufferHandle index_buffer) 
+{
+    static uint16_t counter = -1;
+    counter++;
+    GLVertexInput *vao = &s_ctx.vertex_inputs[counter];
 
-ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code) 
+    GLVertexBuffer *vbo = &s_ctx.vertex_buffers[vertex_buffer.idx];
+
+    GLIndexBuffer *ebo = &s_ctx.index_buffers[index_buffer.idx];
+    glGenVertexArrays(1, &vao->vao);
+    glBindVertexArray(vao->vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo);
+
+    if(SGFX_ASSERT_HANDLE_IS_VALID(index_buffer)) {
+        GLIndexBuffer *ebo = &s_ctx.index_buffers[index_buffer.idx];
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo->ebo);
+    }
+
+    for(size_t i = 0; i < buffer_view.len; i++) 
+    {
+        glVertexAttribPointer(i, buffer_view.element_counts[i], GL_FLOAT, GL_FALSE, buffer_view.stride, (void*)(buffer_view.offsets[i]));
+        glEnableVertexAttribArray(i);
+    }    
+
+    glBindVertexArray(GL_NONE);
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_NONE);
+
+    return (SGFXVertexInputHandle){.idx = counter};
+}
+
+void openglDestroyVertexInput(SGFXVertexInputHandle *handle) 
+{
+    GLVertexInput *vertex_input = &s_ctx.vertex_inputs[handle->idx];
+    glDeleteVertexArrays(1, &vertex_input->vao);
+    handle->idx = SGFX_NULL_INDEX; 
+}
+
+
+SGFXProgramHandle openglCreateProgram(const char *vs_code, const char *fs_code) 
 {
     static uint16_t counter = -1;
     counter++;
     GLProgram* program = &s_ctx.programs[counter];
     const GLuint v_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(v_shader, 1, vs_code, NULL);
+    glShaderSource(v_shader, 1, &vs_code, NULL);
     glCompileShader(v_shader);
     GLint success;
     glGetShaderiv(v_shader, GL_COMPILE_STATUS, &success);
@@ -69,7 +108,7 @@ ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code)
     }
     
     const GLuint f_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(f_shader, 1, fs_code, NULL);
+    glShaderSource(f_shader, 1, &fs_code, NULL);
     glCompileShader(f_shader);
     glGetShaderiv(f_shader, GL_COMPILE_STATUS, &success);
     if (!success) 
@@ -90,17 +129,17 @@ ProgramHandle openglCreateProgram(const char *fs_code, const char *vs_code)
         fprintf("Failed to link shaders into program: %s", infoLog);
     }
     
-    return (ProgramHandle){.idx = counter};
+    return (SGFXProgramHandle){.idx = counter};
 }
 
-void openglDestroyProgram(ProgramHandle *handle) 
+void openglDestroyProgram(SGFXProgramHandle *handle) 
 {
-    GLProgram* program = &s_ctx.programs[handle->idx];
+    GLProgram *program = &s_ctx.programs[handle->idx];
     glDeleteProgram(program->program);
     handle->idx = SGFX_NULL_INDEX;
 }
 
-TextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count) 
+SGFXTextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, size_t height, TextureFormat format, TextureInternalFormat internal_format, size_t mip_map_count) 
 {   
     static uint16_t counter = -1;
     counter++;
@@ -110,15 +149,24 @@ TextureHandle openglCreateTexture(const unsigned char *pixels, size_t width, siz
     glTexImage2D(GL_TEXTURE_2D, 0, openglTextureInternalFormat(internal_format), width, height, 0, openglTextureFormat(format), GL_UNSIGNED_BYTE, (void*)pixels);
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
     
-    return (TextureHandle){.idx = counter};
+    return (SGFXTextureHandle){.idx = counter};
 }
 
-void openglDestroyTexture(TextureHandle *handle) 
+void openglDestroyTexture(SGFXTextureHandle *handle) 
 {
-    GLTexture* texture = &s_ctx.textures[handle->idx];
+    GLTexture *texture = &s_ctx.textures[handle->idx];
     glDeleteTextures(1, &texture->tex);
     handle->idx = SGFX_NULL_INDEX;
 }
 
 
 
+void openglDrawIndexed(size_t count, SGFXVertexInputHandle vertex_input, SGFXProgramHandle program) 
+{
+    GLProgram* p = &s_ctx.programs[program.idx];
+    GLVertexInput *input = &s_ctx.vertex_inputs[vertex_input.idx];
+
+    glBindVertexArray(input->vao);
+    glUseProgram(p->program);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, NULL);
+}
