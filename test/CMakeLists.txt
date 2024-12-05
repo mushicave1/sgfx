@@ -6,8 +6,7 @@ set(SFGFX_TEST_SOURCES
 
 add_executable(sgfx_test ${SFGFX_TEST_SOURCES})
 
-find_package(glfw3 3.3 REQUIRED)
-target_link_libraries(sgfx_test PRIVATE sgfx glfw)
+target_link_libraries(sgfx_test PRIVATE sgfx)
 
 target_include_directories(sgfx_test
     PRIVATE

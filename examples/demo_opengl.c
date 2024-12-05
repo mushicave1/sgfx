@@ -2,6 +2,7 @@
 #include <sgxf.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "window.h"
 
 float vertices[12] = {
     -0.5, -0.5, 1.0, 
@@ -22,26 +23,12 @@ void keyCallback(GLFWwindow* window, int key, int action, int mods, int scancode
     }
 }
 
-static GLFWwindow* initGlfw() 
-{
-    glfwInit(); 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // Required on macOS
-    GLFWwindow* window = glfwCreateWindow(600, 400, "Test", NULL, NULL); 
-    glfwMakeContextCurrent(window); 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { 
-        fprintf(stderr, "Failed to initialize GLAD\n"); 
-    } 
+int main(int argc, char **argv) {
+
+    GLFWwindow* window = createWindow();
 
     glfwSetKeyCallback(window, keyCallback);
-    return window;
-}
 
-
-int main(int argc, char **argv) {
-    GLFWwindow* window = initGlfw();
     sgfxInit(Opengl);
 
     SGFXVertexBufferHandle vbo = sgfxCreateVertexBuffer((void*)vertices, sizeof(float) * sizeof(vertices));
